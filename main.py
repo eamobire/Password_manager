@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from password_generator import *
 import pyperclip
+import json
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -16,7 +17,15 @@ def add_button():
     website_data = website_entry.get()
     email_data = email_entry.get()
     password_data = password_entry.get()
-    if len(website_data) or len(email_data) or len(password_data) == 0:
+
+    save_data = {
+        website_data: {
+            "email": email_data,
+            "password": password_data
+        }
+    }
+
+    if len(website_data) == 0 or len(password_data) == 0:
         messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty")
     else:
         is_ok = messagebox.askokcancel(title=website_data,
@@ -24,11 +33,10 @@ def add_button():
                                                f"\nPassword:{password_data} "
                                                f"\nIs it ok to save")
         if is_ok:
-            with open("Login Credentials.txt", "a") as data:
-                data.write(f"{website_data}, {email_data}, {password_data}\n")
-            website_entry.delete(0, END)
-            email_entry.delete(0, END)
-            password_entry.delete(0, END)
+            with open("Login Credentials.json", "w") as data:
+                json.dump(save_data,data)
+                website_entry.delete(0, END)
+                password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
